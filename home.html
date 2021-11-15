@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bandlab Javascript Test</title>
+    <link rel="stylesheet" href="index.css">
+
+</head>
+<body>
+    <button onclick="onAtzBtnClick()" id="GPBtn">View From A to Z</button>
+    <button onclick="onZtaBtnClick()" id="btn">View From Z to A</button>
+    <button onclick="onViewByUserID()">View By User ID</button>
+
+    <div id="posts"></div>
+</body>
+<script>
+
+    var sortedRespond;
+    var posts = document.getElementById('posts');
+    const newDiv = document.createElement("div");
+
+
+    function onAtzBtnClick(){       
+        //console.log("Button Pressed"); //test button click
+        //Sort Based on title and Group by user (need to sort first)
+        fetch('https://jsonplaceholder.typicode.com/posts').
+        then((response) => response.json()).
+        then((response) => {
+            //console.log(response);
+            sortedRespond = response.sort(function(a,b){
+                console.log("comparing:"+a.title.split(" ").join(" ")+" against:"+b.title.charAt(0));
+                //alternate method
+                //a.title.charAt(0) - b.title.charAt(0) doesn't work as there is space in between. need to split and join
+                //return a.title.split(" ").join(" ") - b.title.split(" ").join(" ");
+                //get Post and Sort from A to Z
+                return a.title.localeCompare(b.title);               
+            });
+            
+            //if not exist
+            if(posts.hasChildNodes())
+            {
+                var existingSpan = document.getElementById('postSpanContainer');
+                posts.removeChild(existingSpan);
+                showAllPosts();
+                /*
+                const newSpan = document.createElement("span");
+                newSpan.setAttribute("id", "postSpanContainer");
+                posts.appendChild(newSpan);
+                sortedRespond.forEach(response1 => {
+                const newDiv = document.createElement("div");
+                newDiv.innerHTML = "ID:"+response1.id+" Title:"+ response1.title + " Body: "+response1.body+" User ID: "+response1.userId;
+                newSpan.appendChild(newDiv);
+            });*/
+                
+            }
+            else{
+                showAllPosts();
+                /*
+                const newSpan = document.createElement("span");
+                newSpan.setAttribute("id", "postSpanContainer");
+                posts.appendChild(newSpan);
+                sortedRespond.forEach(response1 => {
+                const newDiv = document.createElement("div");
+                newDiv.innerHTML = "ID:"+response1.id+" Title:"+ response1.title + " Body: "+response1.body+" User ID: "+response1.userId;
+                newSpan.appendChild(newDiv);
+            });*/
+            }
+        });
+    }
+
+    function onZtaBtnClick(){
+        fetch('https://jsonplaceholder.typicode.com/posts').
+        then((response) => response.json()).
+        then((response) => 
+        {
+            sortedRespond = response.sort(function(a,b)
+            {
+                return b.title.localeCompare(a.title); 
+            });
+
+            if(posts.hasChildNodes())
+            {
+                var existingSpan = document.getElementById('postSpanContainer');
+                posts.removeChild(existingSpan);
+                showAllPosts();
+            }
+            else{
+            showAllPosts();
+            }
+        });
+    }
+
+
+
+    function onViewByUserID(){
+
+
+        var existingSpan = document.getElementById('postSpanContainer');
+        posts.removeChild(existingSpan);
+        sortedRespond = sortedRespond.sort(function(a,b){
+            return a.userId-b.userId;
+        });
+
+        //showAllPosts(); test to see if sort by UserID is working
+        var newSpan = document.createElement("span");
+        newSpan.setAttribute("id", "postSpanContainer");
+        posts.appendChild(newSpan);
+        var currentUserID = 0;
+
+        sortedRespond.forEach(response1 => {
+            if(currentUserID > 0 && currentUserID!=response1.userId){
+                var childGroup = document.createElement("div");
+                childGroup.setAttribute("id", "childGrp"+response1.userId);
+                childGroup.setAttribute("class", "childGrp");
+                childGroup.innerHTML = "User ID: "+response1.userId;
+                newSpan.appendChild(childGroup);
+                addRowToGroup(childGroup,response1);
+                /*
+                var newDiv = document.createElement("div");
+                newDiv.innerHTML = "ID:"+response1.id+" Title:"+ response1.title + " Body: "+response1.body;
+                childGroup.appendChild(newDiv);*/
+                
+                currentUserID = response1.userId;
+            }
+            else if(currentUserID > 0 && currentUserID==response1.userId){
+                var exisitingChildGroup = document.getElementById("childGrp"+response1.userId);
+                addRowToGroup(exisitingChildGroup,response1);
+                /*
+                var newDiv = document.createElement("div");
+                newDiv.innerHTML = "ID:"+response1.id+" Title:"+ response1.title + " Body: "+response1.body;
+                exisitingChildGroup.appendChild(newDiv);*/
+                currentUserID = response1.userId;
+            }
+            else{
+                currentUserID = response1.userId;
+                var childGroup = document.createElement("div");
+                childGroup.setAttribute("id", "childGrp"+response1.userId);
+                childGroup.setAttribute("class", "childGrp");
+                childGroup.innerHTML = "User ID: "+response1.userId;
+                newSpan.appendChild(childGroup);
+                addRowToGroup(childGroup,response1);
+                /*
+                var newDiv = document.createElement("div");
+                newDiv.innerHTML = "ID:"+response1.id+" Title:"+ response1.title + " Body: "+response1.body;
+                childGroup.appendChild(newDiv);*/
+            }
+            });
+
+        function addRowToGroup(childGroup, response1){
+            var newDiv = document.createElement("div");
+
+            const newH3 = document.createElement("h3");
+            newH3.innerHTML = "S/N:"+response1.id+" "+response1.title;
+            newDiv.appendChild(newH3);
+
+            const newP = document.createElement("p");
+            newP.innerHTML = "Body:"+response1.body;
+            newDiv.appendChild(newP);
+
+
+            //newDiv.innerHTML = "ID:"+response1.id+" Title:"+ response1.title + " Body: "+response1.body;
+            childGroup.appendChild(newDiv);
+        }
+    }
+
+    function showAllPosts(){
+        const newSpan = document.createElement("span");
+        newSpan.setAttribute("id", "postSpanContainer");
+        posts.appendChild(newSpan);
+        sortedRespond.forEach(response1 => {
+            const newDiv = document.createElement("div");
+            newDiv.setAttribute("class","newDiv");
+            
+            const newH3 = document.createElement("h3");
+            newH3.innerHTML = "S/N:"+response1.id+" "+response1.title;
+            newDiv.appendChild(newH3);
+
+            const newP = document.createElement("p");
+            newP.innerHTML = "Body:"+response1.body;
+            newDiv.appendChild(newP);
+
+            const newP2 = document.createElement("p");
+            newP2.innerHTML = "User ID:"+response1.userId;
+            newDiv.appendChild(newP2);
+
+            newSpan.appendChild(newDiv);
+            });
+    }
+
+
+        /**********************************************************
+        //Get all post, generate a new Div with the post contents and append the new Div to the parent Div container, posts
+        fetch('https://jsonplaceholder.typicode.com/posts').
+        then((response) => response.json()).
+        then((response) => {
+            console.log(response);
+            var posts = document.getElementById('posts');
+            response.forEach(response1 => {
+                const newDiv = document.createElement("div");
+                newDiv.innerHTML = "ID:"+response1.id+" Title:"+ response1.title + " Body: "+response1.body+" User ID: "+response1.userId;
+                posts.appendChild(newDiv);
+            });
+        });
+        */
+
+        /***********************************************************
+        //Get one post
+        fetch('https://jsonplaceholder.typicode.com/posts/1').
+        then((response) => response.json()).
+        then((response1) => {
+            console.log(response1);
+            var posts = document.getElementById('posts'); 
+            posts.innerHTML = "ID:"+response1.id+" Title:"+ response1.title + " Body: "+response1.body+" User ID: "+response1.userId;
+        });
+        */
+</script>
+</html>
