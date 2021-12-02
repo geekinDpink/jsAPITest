@@ -7,24 +7,9 @@
     <title>Document</title>
 </head>
 <body>
-    <!--
-    <span>
-        <h1>Music Clip 1 Preview</h1>
-        <audio controls="controls" src="https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg">
-        </audio>
-    </span>
-
-    <span>
-        <h1>Music Clip 2 Preview</h1>
-        <audio controls="controls" src="https://static.bandlab.com/soundbanks/previews/synth-organ.ogg">
-        </audio>
-    </span>--->
-
-
-
+<h1>Music Test with Web Audio API</h1>
 </body>
 <script>
-
 var audio = new Audio();
 audio.src = 'https://static.bandlab.com/soundbanks/previews/new-wave-kit.ogg';
 audio.controls = true;
@@ -36,23 +21,6 @@ audio2.src = 'https://static.bandlab.com/soundbanks/previews/synth-organ.ogg';
 audio2.controls = true;
 audio2.autoplay = false;
 document.body.appendChild(audio2);
-
-var context = new webkitAudioContext();
-var analyser = context.createAnalyser();
-
-// Wait for window.onload to fire. See crbug.com/112368
-window.addEventListener('load', function(e) {
-  // Our <audio> element will be the audio source.
-  var source = context.createMediaElementSource(audio);
-  source.connect(analyser);
-  analyser.connect(context.destination);
-
-  var source2 = context.createMediaElementSource(audio2);
-  source2.connect(analyser);
-  analyser.connect(context.destination);
-
-  // ...call requestAnimationFrame() and render the analyser's output to canvas.
-}, false);
 
 </script>
 </html>
