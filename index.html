@@ -126,7 +126,8 @@
         const newSpan = document.createElement("span");
         newSpan.setAttribute("id", "postSpanContainer");
         posts.appendChild(newSpan);
-        sortedRespond.forEach(response1 => {
+        sortedRespond.forEach(response1 => 
+        {
             const newDiv = document.createElement("div");
             newDiv.setAttribute("class","newDiv");
             
@@ -143,7 +144,7 @@
             newDiv.appendChild(newP2);
 
             newSpan.appendChild(newDiv);
-            });
+        });
     }
 
     //Sub-Function 2: Create HTML DOM Elements for each User
